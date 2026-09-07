@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>爱情性格测试 · 仅供娱乐</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 20px 16px; color: #333; }
+  .container { width: 100%; max-width: 420px; background: rgba(255,255,255,0.95); border-radius: 24px; box-shadow: 0 20px 60px rgba(255,100,100,0.2); overflow: hidden; position: relative; }
+  .page { display: none; padding: 32px 24px; animation: fadeIn 0.4s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-icon { font-size: 64px; text-align: center; margin-bottom: 16px; animation: heartbeat 1.5s ease-in-out infinite; }
+  @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+  .hero-title { font-size: 28px; font-weight: 800; text-align: center; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+  .hero-sub { text-align: center; color: #888; font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+  .info-box { background: linear-gradient(135deg, #fff5f5, #ffe8e8); border-radius: 16px; padding: 16px; margin-bottom: 24px; }
+  .info-box p { font-size: 13px; color: #666; line-height: 1.8; }
+  .info-box strong { color: #ee5a6f; }
+  .btn-primary { width: 100%; padding: 16px; border: none; border-radius: 14px; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(238,90,111,0.35); transition: transform 0.15s, box-shadow 0.15s; }
+  .btn-primary:active { transform: scale(0.97); }
+  .progress-bar { height: 6px; background: #ffe0e0; border-radius: 3px; margin-bottom: 24px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #ff6b6b, #ee5a6f); border-radius: 3px; transition: width 0.3s ease; }
+  .question-num { font-size: 13px; color: #ee5a6f; font-weight: 700; margin-bottom: 8px; }
+  .question-text { font-size: 18px; font-weight: 700; line-height: 1.5; margin-bottom: 24px; color: #222; }
+  .option { display: block; width: 100%; padding: 16px 18px; margin-bottom: 12px; background: #fff; border: 2px solid #f0f0f0; border-radius: 14px; font-size: 15px; line-height: 1.5; cursor: pointer; text-align: left; transition: all 0.15s; color: #333; }
+  .option:active { transform: scale(0.98); }
+  .option.selected { border-color: #ee5a6f; background: #fff5f5; color: #ee5a6f; font-weight: 600; }
+  .option-letter { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center; background: #f5f5f5; border-radius: 50%; font-size: 13px; font-weight: 700; margin-right: 10px; color: #999; }
+  .option.selected .option-letter { background: #ee5a6f; color: #fff; }
+  .result-card { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 50%, #c44569 100%); border-radius: 20px; padding: 28px 24px; color: #fff; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .result-emoji { font-size: 56px; margin-bottom: 12px; position: relative; z-index: 1; }
+  .result-type { font-size: 24px; font-weight: 800; margin-bottom: 6px; position: relative; z-index: 1; }
+  .result-tagline { font-size: 14px; opacity: 0.9; position: relative; z-index: 1; }
+  .result-section { background: #fafafa; border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .result-section h3 { font-size: 15px; font-weight: 700; color: #ee5a6f; margin-bottom: 10px; }
+  .result-section p { font-size: 14px; line-height: 1.8; color: #555; }
+  .match-box { display: flex; gap: 10px; margin-top: 8px; }
+  .match-item { flex: 1; text-align: center; padding: 12px 8px; border-radius: 12px; }
+  .match-item.best { background: linear-gradient(135deg, #ffe8e8, #ffd6d6); }
+  .match-item.warn { background: linear-gradient(135deg, #fff3e0, #ffe8cc); }
+  .match-item .match-label { font-size: 11px; color: #999; margin-bottom: 4px; }
+  .match-item .match-name { font-size: 13px; font-weight: 700; color: #333; }
+  .match-item.best .match-name { color: #ee5a6f; }
+  .match-item.warn .match-name { color: #e67e22; }
+  .disclaimer { text-align: center; font-size: 11px; color: #aaa; margin-top: 20px; line-height: 1.6; padding: 0 10px; }
+  .watermark { position: absolute; top: 12px; right: 16px; font-size: 10px; color: rgba(255,255,255,0.6); z-index: 10; }
+  .share-tip { background: #fff8e1; border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: center; }
+  .share-tip p { font-size: 13px; color: #e67e22; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="watermark">仅供娱乐</div>
+  <div class="page active" id="page-home">
+    <div class="hero-icon">💘</div>
+    <h1 class="hero-title">你的爱情性格是什么？</h1>
+    <p class="hero-sub">20道题，6种恋爱人格<br>测出你在感情里最真实的样子</p>
+    <div class="info-box">
+      <p>📝 <strong>测试说明</strong>：共20题，约需3分钟<br>🔒 <strong>隐私保护</strong>：所有答题仅在本机运行，不上传任何信息<br>🎭 <strong>结果用途</strong>：仅供娱乐参考，非专业心理测评</p>
+    </div>
+    <button class="btn-primary" onclick="startTest()">开始测试 →</button>
+    <p class="disclaimer">本测试为娱乐趣味测试，结果不构成任何心理诊断或人生建议</p>
+  </div>
+  <div class="page" id="page-quiz">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="question-num" id="question-num">第 1 题 / 共 20 题</div>
+    <div class="question-text" id="question-text"></div>
+    <div id="options-container"></div>
+  </div>
+  <div class="page" id="page-result">
+    <div class="share-tip"><p>📸 长按屏幕截图保存你的爱情性格报告<br>分享给朋友看看你们配不配！</p></div>
+    <div class="result-card" id="result-card">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-type" id="result-type"></div>
+      <div class="result-tagline" id="result-tagline"></div>
+    </div>
+    <div class="result-section"><h3>🔍 性格画像</h3><p id="result-desc"></p></div>
+    <div class="result-section"><h3>💝 恋爱中的你</h3><p id="result-love"></p></div>
+    <div class="result-section"><h3>💡 成长建议</h3><p id="result-advice"></p></div>
+    <div class="result-section"><h3>🔗 匹配度参考</h3>
+      <div class="match-box">
+        <div class="match-item best"><div class="match-label">最佳搭档</div><div class="match-name" id="match-best"></div></div>
+        <div class="match-item warn"><div class="match-label">需要磨合</div><div class="match-name" id="match-warn"></div></div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="restartTest()">再测一次 🔄</button>
+    <p class="disclaimer">本测试为娱乐趣味测试，结果不构成任何心理诊断或人生建议<br>所有答题数据仅在本机运行，不会上传至任何服务器</p>
+  </div>
+</div>
+<script>
+const P={A:{name:'炽热火焰型',emoji:'🔥',tagline:'爱就轰轰烈烈，不爱就干脆利落',desc:'你是感情里的行动派，喜欢一个人时会毫不掩饰地表达。你的热情像火焰一样能温暖周围的人，也容易在感情里全情投入。你敢爱敢恨，对待感情态度鲜明，不喜欢暧昧和拖泥带水。',love:'在恋爱中，你会主动制造惊喜和浪漫，愿意为对方付出很多。但有时候你的热情可能来得快去得也快，需要学会在激情褪去后依然用心经营。吵架时你容易冲动说狠话，但事后往往会后悔。',advice:'学会给感情降降温，有时候细水长流比轰轰烈烈更长久。在表达情绪前先深呼吸三秒，避免说出伤人的话。你的真诚和热情是最大的魅力，只要加上一点耐心，就能收获非常幸福的感情。',best:'温柔港湾型',warn:'自由风筝型'},B:{name:'温柔港湾型',emoji:'🌸',tagline:'你是别人的避风港，也是最需要被疼爱的人',desc:'你天生细腻敏感，善于察觉别人的情绪变化。你温柔体贴，总是把对方的需求放在前面，是大家公认的"暖男/暖女"。你追求稳定和安全感，不喜欢大起大落的感情，相信平平淡淡才是真。',love:'在恋爱中，你会无微不至地照顾对方，记得每一个纪念日和小习惯。你擅长倾听和包容，是非常理想的伴侣。但你有时候会过度付出，忽略了自己的感受，甚至在感情里失去自我。',advice:'温柔要有，但不是妥协。学会在感情里设立边界，敢于表达自己的真实需求。你对别人好的同时，也要对自己好一点。一个懂得爱自己的人，才能更好地爱别人，也会被别人更加珍惜。',best:'炽热火焰型',warn:'理性分析型'},C:{name:'理性分析型',emoji:'🧊',tagline:'连谈恋爱都要讲道理的逻辑大师',desc:'你是一个非常理性的人，做任何事情都喜欢分析利弊，包括感情。你不会轻易心动，但一旦认定一个人就会非常专一。你遇事冷静，不喜欢情绪化的争吵，相信任何问题都可以通过沟通解决。',love:'在恋爱中，你可能不太会说甜言蜜语，但会用实际行动证明自己的爱。你做事有条理，会规划两个人的未来。但有时候你过于理性，会让对方觉得你不够浪漫甚至有些冷漠。吵架时你喜欢讲道理，但对方可能只是想要一个拥抱。',advice:'感情不是辩论赛，不是所有事情都要分对错。学会偶尔"不讲理"一点，多说几句甜言蜜语，多给对方一些拥抱和惊喜。你的靠谱和稳重是很大的优点，加上一点感性和浪漫，会让你的感情更加甜蜜。',best:'浪漫梦幻型',warn:'温柔港湾型'},D:{name:'自由风筝型',emoji:'🕊️',tagline:'爱情诚可贵，自由价更高',desc:'你是一个热爱自由的人，不喜欢被束缚和限制。你有自己的兴趣爱好和社交圈，不会因为谈恋爱就放弃自己的生活。你追求轻松愉快的相处模式，讨厌黏人和查岗，相信好的感情应该是两个人各自精彩又彼此吸引。',love:'在恋爱中，你需要足够的个人空间，不喜欢天天腻在一起。你欣赏独立有个性的伴侣，不喜欢对方过度依赖你。但有时候你过于追求自由，会让对方觉得你不够在乎这段感情，甚至产生不安全感。',advice:'自由和爱情并不矛盾，关键在于找到平衡点。学会主动跟对方报备行踪，不是因为被要求，而是因为在乎。偶尔的黏人和依赖并不会让你失去自由，反而会让感情更加亲密。给对方足够的安全感，你才能拥有更多的自由。',best:'默默守护型',warn:'炽热火焰型'},E:{name:'默默守护型',emoji:'🌙',tagline:'不说爱你，但每件事都在说爱你',desc:'你是一个内敛深沉的人，不擅长用语言表达感情，但行动力十足。你相信"说的好听不如做的实在"，会用实际行动默默守护对方。你踏实可靠，虽然不浪漫，但给人满满的安全感，是那种"润物细无声"的类型。',love:'在恋爱中，你可能不会说"我爱你"，但会在对方生病时端茶倒水，在对方遇到困难时第一时间出现。你记得对方的喜好，会在不经意间给对方惊喜。但有时候你过于沉默，会让对方猜不透你的心思，甚至怀疑你是不是不够爱。',advice:'爱要大声说出来，行动很重要，语言也不可少。学会表达自己的感受，哪怕只是一句简单的"我想你了"。偶尔制造一些小浪漫，不需要多昂贵，关键是让对方感受到你的心意。你的默默付出很珍贵，让对方知道会更加幸福。',best:'自由风筝型',warn:'浪漫梦幻型'},F:{name:'浪漫梦幻型',emoji:'✨',tagline:'在爱情里，你永远是那个追光的人',desc:'你是一个浪漫主义者，对爱情有着美好的憧憬和期待。你喜欢仪式感，相信爱情应该是甜蜜而梦幻的。你想象力丰富，善于制造浪漫氛围，跟你在一起永远不会觉得无聊。你追求灵魂契合，希望找到那个"对的人"。',love:'在恋爱中，你会精心准备每一个纪念日，创造各种浪漫回忆。你喜欢甜言蜜语，也愿意对对方说情话。但有时候你过于理想化，会把现实中的感情和想象中的对比，容易感到失望。你对感情的期待很高，可能会给对方带来压力。',advice:'浪漫是调味剂，不是主食。学会接受感情里的平淡和不完美，真实的爱情虽然没有那么多惊心动魄，但细水长流也有它的美好。降低对对方的期待，多关注对方实际的付出。你的浪漫和热情是天赋，用在对的地方会让感情更加美好。',best:'理性分析型',warn:'默默守护型'}};
+const Q=[{q:'第一次见到有好感的人，你通常会？',o:[{t:'主动搭话，制造认识的机会',s:{A:2,F:1}},{t:'偷偷观察，等对方先开口',s:{B:2,E:1}},{t:'分析对方是否适合自己，再决定',s:{C:2,D:1}},{t:'顺其自然，有缘自然会认识',s:{D:2,E:1}}]},{q:'恋爱中，你最看重的是什么？',o:[{t:'激情和心动的感觉',s:{A:2,F:1}},{t:'安全感和稳定感',s:{B:2,E:1}},{t:'三观契合和理性沟通',s:{C:2,D:1}},{t:'各自独立又彼此吸引',s:{D:2,A:1}}]},{q:'纪念日到了，你会？',o:[{t:'精心策划一场惊喜约会',s:{F:2,A:1}},{t:'准备一份贴心的实用礼物',s:{B:2,E:1}},{t:'提前商量好怎么过，不踩雷',s:{C:2,B:1}},{t:'觉得日常开心就好，不必太刻意',s:{D:2,E:1}}]},{q:'对方惹你生气了，你通常会？',o:[{t:'当场说出来，不吐不快',s:{A:2,F:1}},{t:'生闷气，等对方来哄',s:{B:2,F:1}},{t:'冷静下来后跟对方讲道理',s:{C:2,E:1}},{t:'自己消化，不想因为小事吵架',s:{D:2,E:1}}]},{q:'你理想中的约会是？',o:[{t:'去游乐园、演唱会等热闹的地方',s:{A:2,F:1}},{t:'在家做饭看电影，温馨就好',s:{B:2,E:1}},{t:'去博物馆、展览，有内涵的地方',s:{C:2,D:1}},{t:'来一场说走就走的旅行',s:{D:2,A:1}}]},{q:'对方一整天没回消息，你会？',o:[{t:'连发好几条，甚至打电话过去',s:{A:2,F:1}},{t:'心里很不安，但还是忍着等',s:{B:2,E:1}},{t:'分析对方可能在忙什么，不瞎想',s:{C:2,D:1}},{t:'无所谓，我自己也有事情忙',s:{D:2,E:1}}]},{q:'关于未来规划，你倾向于？',o:[{t:'恋爱了就想永远在一起',s:{F:2,B:1}},{t:'一步一步来，顺其自然',s:{B:2,E:1}},{t:'理性评估各方面条件再决定',s:{C:2,D:1}},{t:'不想被绑定，享受当下就好',s:{D:2,A:1}}]},{q:'你觉得自己在感情里最大的优点是？',o:[{t:'热情主动，敢爱敢恨',s:{A:2}},{t:'温柔体贴，善解人意',s:{B:2}},{t:'理性成熟，遇事冷静',s:{C:2}},{t:'独立自由，不黏人',s:{D:2}}]},{q:'吵架后，你通常会？',o:[{t:'虽然气但忍不住先找对方',s:{A:2,F:1}},{t:'等对方道歉，不然就一直冷战',s:{B:2,F:1}},{t:'主动复盘问题，寻求解决办法',s:{C:2,E:1}},{t:'各自冷静几天，自然就和好了',s:{D:2,E:1}}]},{q:'你怎么看待"异性闺蜜"？',o:[{t:'完全不能接受，容易出事',s:{A:2,B:1}},{t:'心里会介意，但嘴上不说',s:{B:2,E:1}},{t:'可以接受，但要有明确边界',s:{C:2,D:1}},{t:'完全没问题，我自己也有',s:{D:2,A:1}}]},{q:'对方遇到困难向你倾诉，你会？',o:[{t:'立刻想办法帮对方解决',s:{A:2,E:1}},{t:'耐心倾听，给予情感支持',s:{B:2,F:1}},{t:'帮对方分析问题，给出建议',s:{C:2,D:1}},{t:'陪对方做些开心的事转移注意力',s:{F:2,D:1}}]},{q:'你觉得爱情里最不能容忍的是？',o:[{t:'背叛和欺骗',s:{A:2,B:1}},{t:'冷漠和忽视',s:{B:2,F:1}},{t:'不讲道理和情绪化',s:{C:2,D:1}},{t:'控制欲太强和不自由',s:{D:2,A:1}}]},{q:'如果对方提出想暂时分开冷静一下，你会？',o:[{t:'坚决不同意，有问题当面说',s:{A:2,F:1}},{t:'非常伤心，觉得要分手了',s:{B:2,F:1}},{t:'同意，给彼此空间想清楚',s:{C:2,D:1}},{t:'正好，我也需要自己的空间',s:{D:2,E:1}}]},{q:'你会怎么表达"我想你了"？',o:[{t:'直接说"我想你了"',s:{A:2,F:1}},{t:'发个可爱的表情包暗示',s:{B:2,F:1}},{t:'问对方"在干嘛呢"',s:{C:2,E:1}},{t:'不太会表达，默默关注就好',s:{E:2,D:1}}]},{q:'恋爱中，你的朋友圈会？',o:[{t:'经常秀恩爱，巴不得全世界知道',s:{A:2,F:1}},{t:'偶尔发，重要日子才秀',s:{B:2,E:1}},{t:'很少发，感情是两个人的事',s:{C:2,D:1}},{t:'几乎不发，保持低调',s:{D:2,E:1}}]},{q:'你怎么看待异地恋？',o:[{t:'很难接受，需要天天见面',s:{A:2,B:1}},{t:'可以接受但会很没有安全感',s:{B:2,F:1}},{t:'可以接受，关键看怎么维护',s:{C:2,D:1}},{t:'完全没问题，距离产生美',s:{D:2,A:1}}]},{q:'对方做了让你感动的事，你会？',o:[{t:'当场表达感动，甚至哭出来',s:{F:2,A:1}},{t:'心里很暖，记在心里以后回报',s:{B:2,E:1}},{t:'真诚地说谢谢，然后记在心里',s:{C:2,E:1}},{t:'嘴上不说，但会用行动回应',s:{E:2,D:1}}]},{q:'如果感情变淡了，你会？',o:[{t:'努力制造新鲜感，挽回激情',s:{A:2,F:1}},{t:'很难过，但不知道该怎么办',s:{B:2,E:1}},{t:'跟对方沟通，一起找原因',s:{C:2,B:1}},{t:'接受平淡，或者考虑分开',s:{D:2,E:1}}]},{q:'你觉得自己在感情里最需要改进的是？',o:[{t:'控制情绪，不要太冲动',s:{A:2,C:1}},{t:'学会独立，不要太依赖',s:{B:2,F:1}},{t:'多些浪漫，不要太理性',s:{C:2,F:1}},{t:'多些陪伴，不要太疏离',s:{D:2,E:1}}]},{q:'最后一题：你希望别人怎么形容你的爱情？',o:[{t:'轰轰烈烈，刻骨铭心',s:{A:2,F:1}},{t:'温馨甜蜜，细水长流',s:{B:2,E:1}},{t:'成熟稳定，互相成就',s:{C:2,D:1}},{t:'自由轻松，各自精彩',s:{D:2,A:1}}]}];
+let cq=0,sc={A:0,B:0,C:0,D:0,E:0,F:0};
+function startTest(){cq=0;sc={A:0,B:0,C:0,D:0,E:0,F:0};showPage('page-quiz');rq();}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function rq(){const q=Q[cq];document.getElementById('question-num').textContent='第 '+(cq+1)+' 题 / 共 '+Q.length+' 题';document.getElementById('question-text').textContent=q.q;document.getElementById('progress-fill').style.width=((cq)/Q.length*100)+'%';const c=document.getElementById('options-container');c.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const b=document.createElement('button');b.className='option';b.innerHTML='<span class="option-letter">'+L[i]+'</span>'+opt.t;b.onclick=()=>so(i,opt.s);c.appendChild(b);});}
+function so(i,s){const os=document.querySelectorAll('.option');os.forEach((o,j)=>{if(j===i)o.classList.add('selected');});for(let k in s){sc[k]+=s[k];}setTimeout(()=>{cq++;if(cq<Q.length){rq();}else{sr();}},250);}
+function sr(){let mx=0,rk='A';for(let k in sc){if(sc[k]>mx){mx=sc[k];rk=k;}}const p=P[rk];document.getElementById('result-emoji').textContent=p.emoji;document.getElementById('result-type').textContent=p.name;document.getElementById('result-tagline').textContent=p.tagline;document.getElementById('result-desc').textContent=p.desc;document.getElementById('result-love').textContent=p.love;document.getElementById('result-advice').textContent=p.advice;document.getElementById('match-best').textContent=p.best;document.getElementById('match-warn').textContent=p.warn;showPage('page-result');}
+function restartTest(){startTest();}
+</script>
+</body>
+</html>

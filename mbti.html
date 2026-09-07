@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MBTI职业性格测试</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px 16px}
+  .container{background:#fff;border-radius:20px;max-width:480px;width:100%;padding:32px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+  h1{text-align:center;color:#4a3f8f;font-size:26px;margin-bottom:6px}
+  .subtitle{text-align:center;color:#888;font-size:13px;margin-bottom:24px}
+  .progress-bar{background:#eee;border-radius:10px;height:8px;margin-bottom:16px;overflow:hidden}
+  .progress-fill{background:linear-gradient(90deg,#667eea,#764ba2);height:100%;border-radius:10px;transition:width .3s}
+  .progress-text{text-align:center;color:#999;font-size:13px;margin-bottom:20px}
+  .question{font-size:17px;font-weight:700;color:#333;margin-bottom:20px;line-height:1.6}
+  .option{background:#f7f7fb;border:2px solid #e8e8f0;border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer;font-size:14px;color:#444;transition:all .2s;line-height:1.6}
+  .option:active{border-color:#667eea;background:#eef0ff}
+  .option.selected{border-color:#667eea;background:#eef0ff;color:#4a3f8f;font-weight:600}
+  .btn-group{display:flex;gap:12px;margin-top:16px}
+  .btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+  .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+  .btn-primary:active{opacity:.85}
+  .btn-secondary{background:#eee;color:#666}
+  .btn-secondary:active{background:#ddd}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .result{text-align:center}
+  .result-type{font-size:38px;font-weight:900;color:#4a3f8f;margin:12px 0 4px}
+  .result-name{font-size:18px;color:#764ba2;font-weight:700;margin-bottom:16px}
+  .result-emoji{font-size:56px}
+  .result-card{background:#f7f7fb;border-radius:14px;padding:18px;text-align:left;margin-bottom:12px}
+  .result-card h3{color:#4a3f8f;font-size:15px;margin-bottom:8px}
+  .result-card p{color:#555;font-size:13px;line-height:1.8}
+  .dimension-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:14px 0}
+  .dim-tag{background:#eef0ff;color:#4a3f8f;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700}
+  .disclaimer{margin-top:20px;padding:12px;background:#fff8e1;border-radius:10px;color:#856404;font-size:12px;text-align:center;line-height:1.6}
+  .restart-btn{margin-top:14px;width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+  .restart-btn:active{opacity:.85}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>MBTI职业性格测试</h1>
+  <div class="subtitle">20道题，测出你的16型人格与适合职业</div>
+  <div id="quizPage">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">第 1 / 20 题</div>
+    <div class="question" id="questionText"></div>
+    <div class="option" id="optA" onclick="selectOption('A')"></div>
+    <div class="option" id="optB" onclick="selectOption('B')"></div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" disabled>上一题</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一题</button>
+    </div>
+  </div>
+  <div class="result" id="resultPage" style="display:none">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-type" id="resultType"></div>
+    <div class="result-name" id="resultName"></div>
+    <div class="dimension-tags" id="dimTags"></div>
+    <div class="result-card" id="resultPortrait"></div>
+    <div class="result-card" id="resultCareer"></div>
+    <div class="result-card" id="resultStrength"></div>
+    <div class="result-card" id="resultAdvice"></div>
+    <button class="restart-btn" onclick="restart()">再测一次</button>
+    <div class="disclaimer">⚠️ 本测试为趣味性格测试，结果仅供娱乐参考，非专业心理测评工具</div>
+  </div>
+</div>
+<script>
+var Q=[
+{dim:"EI",a:"在聚会中，我通常是那个主动和很多人聊天的人",b:"我更愿意和少数熟悉的朋友深入聊天"},
+{dim:"SN",a:"我更关注事情的实际细节和具体操作",b:"我更关注事情的可能性和未来想象"},
+{dim:"TF",a:"做决定时，我更多依赖逻辑和客观分析",b:"做决定时，我更多考虑人情和他人感受"},
+{dim:"JP",a:"我喜欢提前做好计划，按计划执行",b:"我喜欢保持灵活，随机应变"},
+{dim:"EI",a:"忙碌一整天后，和朋友聚会能让我充满能量",b:"忙碌一整天后，我更想一个人安静待着恢复能量"},
+{dim:"SN",a:"我更相信亲身经验过的事情",b:"我更相信直觉和灵感给我的提示"},
+{dim:"TF",a:"当朋友倾诉烦恼时，我更倾向于帮他分析解决办法",b:"当朋友倾诉烦恼时，我更倾向于先安抚他的情绪"},
+{dim:"JP",a:"我的桌面和房间通常整理得井井有条",b:"我的桌面和房间通常比较随性"},
+{dim:"EI",a:"我说话时经常想到什么就说什么",b:"我说话前通常会先在脑子里过一遍"},
+{dim:"SN",a:"我喜欢一步一步按说明书的步骤操作",b:"我喜欢自己摸索，不怎么看说明书"},
+{dim:"TF",a:"评判一件事时，我更看重结果是否合理",b:"评判一件事时，我更看重过程是否公平"},
+{dim:"JP",a:"我通常会在截止日期前早早完成任务",b:"我通常会在截止日期前一刻才完成"},
+{dim:"EI",a:"在团队中，我喜欢主动发表意见和主导讨论",b:"在团队中，我更喜欢倾听和思考后再发言"},
+{dim:"SN",a:"我更关注眼前真实发生的事",b:"我更常思考'如果……会怎样'"},
+{dim:"TF",a:"我批评别人时，通常就事论事",b:"我批评别人时，会特别在意对方的感受"},
+{dim:"JP",a:"我喜欢生活有规律，固定时间做固定的事",b:"我喜欢生活充满变化和惊喜"},
+{dim:"EI",a:"认识新朋友对我来说是件轻松愉快的事",b:"认识新朋友对我来说需要消耗不少精力"},
+{dim:"SN",a:"我更容易记住具体的事实和数据",b:"我更容易记住画面感和整体印象"},
+{dim:"TF",a:"争论时，我坚持'对事不对人'",b:"争论时，我更担心伤了彼此感情"},
+{dim:"JP",a:"我习惯把要做的事列成清单",b:"我习惯心里有数就行，不列清单"}
+];
+var ans=[],cur=0;
+var T={
+"ISTJ":{e:"📋",n:"检查者",p:"务实、严谨、可靠，是团队中最让人放心的人。你注重规则和秩序，答应的事一定会做到。",c:"适合：会计师、审计师、行政主管、项目经理、公务员、数据分析师",s:"优势：责任心强、执行力满分、注重细节、稳定可靠",a:"建议：偶尔放松对完美的追求，多倾听直觉和他人的感受"},
+"ISFJ":{e:"🛡️",n:"守护者",p:"温暖、细心、默默付出，总是在背后支持他人。你记得朋友随口说过的小事，总能在别人需要时及时出现。",c:"适合：护士、教师、人力资源、客服管理、社会工作者、行政秘书",s:"优势：体贴入微、责任心强、忠诚可靠、服务意识强",a:"建议：学会拒绝和表达自己的需求，你的付出值得被看见"},
+"INFJ":{e:"🌌",n:"提倡者",p:"理想主义与洞察力的结合体。你深刻、有远见，渴望帮助他人成长，内心有一个宏大的精神世界。",c:"适合：心理咨询师、作家、人力资源、培训师、公益组织、教育顾问",s:"优势：洞察力强、共情力深、有远见、坚定而有原则",a:"建议：理想很丰满，也要记得照顾现实中的自己，把大目标拆成小步骤"},
+"INTJ":{e:"🧠",n:"建筑师",p:"战略家气质，独立、理性、目标感极强。你习惯深度思考，擅长规划长期战略，不畏惧孤独。",c:"适合：战略顾问、科学家、架构师、金融分析师、产品经理、法律顾问",s:"优势：战略思维、独立性强、逻辑严密、执行力强",a:"建议：你的高冷有时会推开想靠近你的人，适当表达感受，团队协作能走得更远"},
+"ISTP":{e:"🔧",n:"鉴赏家",p:"冷静的实干家，动手能力超强。你擅长解决实际问题，遇事不慌，喜欢研究事物运作的原理。",c:"适合：工程师、外科医生、飞行员、技术员、赛车手、程序员",s:"优势：冷静理性、动手能力强、应变能力佳、务实",a:"建议：别总把想法藏在心里，你的洞察很宝贵，适度的规划会打开更多可能性"},
+"ISFP":{e:"🎨",n:"探险家",p:"温柔的艺术灵魂，热爱美与自由。你安静、友善、善于发现生活中的小美好，用自己的方式温柔地回应世界。",c:"适合：设计师、摄影师、厨师、造型师、兽医、艺术创作者",s:"优势：审美力强、温柔共情、灵活适应、忠于内心",a:"建议：你的才华值得被更多人看见，别怕冲突，坚定表达自己的立场"},
+"INFP":{e:"🦋",n:"调停者",p:"诗意与纯粹的化身。你内心柔软，充满理想主义，追求意义感，善于倾听和理解，是朋友心中最懂我的人。",c:"适合：作家、心理咨询师、编辑、插画师、公益从业者、大学教师",s:"优势：共情力强、创造力丰富、价值观坚定、真诚善良",a:"建议：理想主义的你要学会与现实和解，行动是治愈焦虑的良药，先完成再完美"},
+"INTP":{e:"🔬",n:"逻辑学家",p:"天生的思考者，好奇心永不熄灭。你喜欢剖析事物的本质，对未知充满探索欲，思维天马行空，常有惊人的洞见。",c:"适合：科学家、程序员、哲学研究者、数据分析师、游戏设计师、学者",s:"优势：逻辑严密、思维深刻、创意无限、求知欲强",a:"建议：想法很多，落地更重要，试着与人分享你的思考，别让完美主义困住你的行动"},
+"ESTP":{e:"⚡",n:"企业家",p:"行动派的冒险家，精力充沛、反应敏捷。你活在当下，敢于尝试，善于抓住机会，是天生的破局者和谈判高手。",c:"适合：销售经理、创业者、市场营销、警察、运动员、投资顾问",s:"优势：行动力强、应变敏捷、善于交际、敢于冒险",a:"建议：冲动是魔鬼，三思而后行，长期规划与短期快感之间找到平衡"},
+"ESFP":{e:"🎉",n:"表演者",p:"人群中的小太阳，天生的快乐制造机。你热情开朗、多才多艺，能让周围的人都开心起来，享受当下每一刻。",c:"适合：艺人、主持人、公关、旅游行业、教育培训、活动策划",s:"优势：热情开朗、感染力强、多才多艺、活在当下",a:"建议：快乐之外也要未雨绸缪，静下心来规划未来，你的热情值得更持久的舞台"},
+"ENFP":{e:"🌈",n:"竞选者",p:"充满热情与创意的自由灵魂。你好奇心旺盛，善于发现他人的闪光点，总是能给周围带来新鲜的灵感和能量。",c:"适合：创意总监、记者、心理咨询师、演员、品牌策划、创业者",s:"优势：创意丰富、热情洋溢、洞察人心、感染力强",a:"建议：兴趣广泛是天赋，专注是超能力，选一个方向深耕，你的才华会真正发光"},
+"ENTP":{e:"💡",n:"辩论家",p:"机智敏捷的创意引擎。你热爱思辨，喜欢挑战常规，脑子里总有新点子，是团队里那个总能想到别的办法的人。",c:"适合：创业者、律师、产品经理、主持人、编剧、战略顾问",s:"优势：思维敏捷、创意爆棚、辩论高手、适应力强",a:"建议：点子多也要学会收敛，做完比想完更有价值，坚持一件事到结果你会很强大"},
+"ESTJ":{e:"🏢",n:"总经理",p:"天生的管理者，高效、果断、有担当。你重视秩序和效率，擅长组织协调，是天生的主心骨和定海神针。",c:"适合：企业高管、项目经理、军官、法官、学校校长、运营总监",s:"优势：组织力强、决策果断、责任感强、高效务实",a:"建议：效率之外别忽略人心，适当放权、多听他人意见，你的团队会更愿意追随你"},
+"ESFJ":{e:"🤝",n:"执政官",p:"热情周到的社群组织者。你重视和谐与互助，善于照顾每个人的感受，是朋友圈里的大管家，总能把大家聚在一起。",c:"适合：教师、医生、社工、活动策划、客户经理、HR",s:"优势：热情周到、组织力强、善于共情、责任感强",a:"建议：别把别人的评价看得太重，你的价值不是由他人满意定义的，学会对自己也好一点"},
+"ENFJ":{e:"🌟",n:"主人公",p:"天生的领导者与激励者。你温暖、有感染力，善于发现并成就他人，总能点燃团队的斗志，是人群中自带光芒的人。",c:"适合：教育培训、心理咨询、管理咨询、公益领袖、传媒主持、政界",s:"优势：领导力强、共情力深、感染力强、有远见",a:"建议：帮助别人之前先照顾好自己，你也需要被倾听被支持，不必永远做那个撑伞的人"},
+"ENTJ":{e:"👑",n:"指挥官",p:"天生的统帅，果敢、自信、格局远大。你目标明确，善于调动资源，敢于做艰难决定，是天生的领航人。",c:"适合：企业CEO、创业家、投行高管、军队指挥官、政界领袖、咨询总监",s:"优势：领导力强、战略清晰、果断自信、执行力MAX",a:"建议：强势之余多点柔软，倾听会带来你意想不到的收获，成就不只是目标达成也包括人心"}
+};
+function rq(){var q=Q[cur];document.getElementById("questionText").textContent=(cur+1)+". "+q.a+"？（或：我更倾向于后者）";document.getElementById("optA").textContent="A. "+q.a;document.getElementById("optB").textContent="B. "+q.b;document.getElementById("progressFill").style.width=((cur+1)/Q.length*100)+"%";document.getElementById("progressText").textContent="第 "+(cur+1)+" / "+Q.length+" 题";document.getElementById("optA").classList.remove("selected");document.getElementById("optB").classList.remove("selected");if(ans[cur]==="A")document.getElementById("optA").classList.add("selected");if(ans[cur]==="B")document.getElementById("optB").classList.add("selected");document.getElementById("prevBtn").disabled=(cur===0);document.getElementById("nextBtn").textContent=(cur===Q.length-1)?"查看结果":"下一题";}
+function selectOption(o){ans[cur]=o;document.getElementById("optA").classList.remove("selected");document.getElementById("optB").classList.remove("selected");document.getElementById("opt"+o).classList.add("selected");}
+function nextQuestion(){if(!ans[cur]){alert("请先选择一个答案");return;}if(cur<Q.length-1){cur++;rq();}else{calc();}}
+function prevQuestion(){if(cur>0){cur--;rq();}}
+function calc(){var s={E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};for(var i=0;i<Q.length;i++){var d=Q[i].dim,o=ans[i];if(d==="EI"){o==="A"?s.E++:s.I++;}if(d==="SN"){o==="A"?s.S++:s.N++;}if(d==="TF"){o==="A"?s.T++:s.F++;}if(d==="JP"){o==="A"?s.J++:s.P++;}}var tp="";tp+=s.E>=s.I?"E":"I";tp+=s.S>=s.N?"S":"N";tp+=s.T>=s.F?"T":"F";tp+=s.J>=s.P?"J":"P";var t=T[tp];document.getElementById("resultEmoji").textContent=t.e;document.getElementById("resultType").textContent=tp;document.getElementById("resultName").textContent=t.n;var dims=[];dims.push(s.E>=s.I?"外向 E"+s.E:"内向 I"+s.I);dims.push(s.S>=s.N?"实感 S"+s.S:"直觉 N"+s.N);dims.push(s.T>=s.F?"思考 T"+s.T:"情感 F"+s.F);dims.push(s.J>=s.P?"判断 J"+s.J:"知觉 P"+s.P);document.getElementById("dimTags").innerHTML=dims.map(function(d){return '<span class="dim-tag">'+d+'</span>';}).join("");document.getElementById("resultPortrait").innerHTML="<h3>🧩 性格画像</h3><p>"+t.p+"</p>";document.getElementById("resultCareer").innerHTML="<h3>💼 适合职业</h3><p>"+t.c+"</p>";document.getElementById("resultStrength").innerHTML="<h3>✨ 你的优势</h3><p>"+t.s+"</p>";document.getElementById("resultAdvice").innerHTML="<h3>🌱 成长建议</h3><p>"+t.a+"</p>";document.getElementById("quizPage").style.display="none";document.getElementById("resultPage").style.display="block";}
+function restart(){ans=[];cur=0;document.getElementById("quizPage").style.display="block";document.getElementById("resultPage").style.display="none";rq();}
+rq();
+</script>
+</body>
+</html>
